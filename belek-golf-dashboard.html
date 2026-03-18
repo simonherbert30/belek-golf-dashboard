@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belek Open 2026 — Golf Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0d1a12;
+    --dark2: #142019;
+    --dark3: #1c2e22;
+    --panel: #1a2820;
+    --panel2: #213328;
+    --gold: #c8a84b;
+    --gold2: #e2c97e;
+    --gold3: #f0dfa0;
+    --green-bright: #4caf72;
+    --green-mid: #2d7a4f;
+    --text: #e8ede9;
+    --text2: #a8b8aa;
+    --text3: #6a7d6c;
+    --border: rgba(200,168,75,0.18);
+    --border2: rgba(200,168,75,0.08);
+    --red: #e05252;
+    --blue: #5b9bd5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--dark2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; gap: 1rem;
+  }
+  .logo-block { display: flex; align-items: center; gap: 14px; }
+  .logo-badge {
+    width: 40px; height: 40px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-badge svg { width: 22px; height: 22px; fill: var(--dark2); }
+  .logo-text { line-height: 1.2; }
+  .logo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--gold2);
+    letter-spacing: 0.01em;
+  }
+  .logo-sub { font-size: 11px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-nav { display: flex; gap: 4px; }
+  .nav-btn {
+    padding: 6px 14px; font-size: 12px; font-weight: 500;
+    border: 1px solid transparent; border-radius: 6px;
+    background: transparent; color: var(--text2);
+    cursor: pointer; transition: all .15s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.03em;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--panel2); }
+  .nav-btn.active { color: var(--gold2); border-color: var(--border); background: var(--panel); }
+  .header-badge {
+    font-size: 11px; font-weight: 500; padding: 4px 10px;
+    border: 1px solid var(--gold);
+    border-radius: 20px; color: var(--gold);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--dark2) 0%, #0d1f15 50%, var(--dark) 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 3rem 2rem 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(ellipse at 70% 40%, rgba(200,168,75,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 700; line-height: 1.1;
+    color: var(--text); margin-bottom: 8px;
+  }
+  .hero-title span { color: var(--gold2); }
+  .hero-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    font-size: 12px; color: var(--text2);
+    font-weight: 400;
+  }
+  .pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-header { margin-bottom: 1.5rem; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-desc { font-size: 13px; color: var(--text3); }
+
+  /* ── STAT GRID ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border2);
+    border-radius: 10px; padding: 16px 18px;
+    transition: border-color .2s;
+  }
+  .stat-card:hover { border-color: var(--border); }
+  .stat-label { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .stat-sub { font-size: 11px; color: var(--text3); }
+
+  /* ── COURSE CARDS ── */
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 2rem; }
+  .course-card {
+    background: var(--panel);
+    border: 1px solid var(--border2);
+    border-radius: 12px; overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .course-card:hover { border-color: var(--border); transform: translateY(-2px); }
+  .course-card-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border2);
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px;
+  }
+  .course-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 600; color: var(--text);
+    margin-bottom: 2px;
+  }
+  .course-date { font-size: 12px; color: var(--text3); }
+  .course-badge-chip {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500;
+    white-space: nowrap; letter-spacing: 0.04em;
+  }
+  .chip-pasha { background: rgba(91,155,213,0.15); color: #7bb8e8; border: 1px solid rgba(91,155,213,0.25); }
+  .chip-kaya { background: rgba(76,175,114,0.15); color: #6ecb90; border: 1px solid rgba(76,175,114,0.25); }
+  .chip-carya { background: rgba(200,168,75,0.15); color: var(--gold2); border: 1px solid var(--border); }
+  .course-card-body { padding: 16px 20px; }
+  .course-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border2); }
+  .course-stat-row:last-child { border-bottom: none; }
+  .csr-label { font-size: 12px; color: var(--text3); }
+  .csr-value { font-size: 13px; font-weight: 500; color: var(--text); }
+  .bar-mini-wrap { display: flex; align-items: center; gap: 8px; }
+  .bar-mini-track { width: 80px; height: 6px; background: var(--dark3); border-radius: 3px; overflow: hidden; }
+  .bar-mini-fill { height: 100%; border-radius: 3px; }
+
+  /* ── SCORECARD TABLE ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; border-radius: 10px; border: 1px solid var(--border2); }
+  table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  thead th {
+    background: var(--panel2); color: var(--text3);
+    font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 10px 8px; text-align: center;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+  thead th.lh { text-align: left; padding-left: 14px; }
+  tbody td {
+    padding: 7px 8px; text-align: center;
+    border-bottom: 1px solid var(--border2);
+    font-size: 12px; color: var(--text2);
+  }
+  tbody td.lh { text-align: left; padding-left: 14px; font-weight: 500; color: var(--text); font-size: 12px; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.sub-row td { background: var(--dark3); font-weight: 500; color: var(--text); }
+  tr.tot-row td { background: var(--panel2); font-weight: 600; color: var(--gold2); }
+  .par3 td:not(.lh) { color: #7bb8e8; }
+  .par5 td:not(.lh) { color: #6ecb90; }
+  .si-val { color: var(--text3) !important; font-size: 11px !important; }
+  .dist-val { color: var(--text3) !important; font-size: 11px !important; }
+
+  /* ── HAZARD BARS ── */
+  .hazard-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 2rem; }
+  .hazard-card {
+    background: var(--panel); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .haz-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border2); }
+  .haz-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .haz-row:last-child { margin-bottom: 0; }
+  .haz-label { font-size: 12px; color: var(--text3); width: 56px; flex-shrink: 0; }
+  .haz-track { flex: 1; height: 8px; background: var(--dark3); border-radius: 4px; overflow: hidden; }
+  .haz-fill { height: 100%; border-radius: 4px; }
+  .haz-val { font-size: 12px; font-weight: 500; color: var(--text); width: 72px; text-align: right; flex-shrink: 0; }
+
+  /* ── HANDICAP TABLE ── */
+  .hcp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .hcp-card {
+    background: var(--panel); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .hcp-card:hover { border-color: var(--border); }
+  .hcp-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .hcp-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .hcp-ehi { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+  .hcp-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border2); }
+  .hcp-row:last-child { border-bottom: none; }
+  .hcp-course-lbl { font-size: 11px; color: var(--text3); }
+  .hcp-ph { font-size: 13px; font-weight: 600; }
+
+  /* ── PRICE CARDS ── */
+  .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 1.5rem; }
+  .price-card {
+    background: var(--panel); border: 1px solid var(--border2);
+    border-radius: 12px; padding: 20px 22px;
+    transition: border-color .2s;
+  }
+  .price-card:hover { border-color: var(--border); }
+  .price-card.highlight { border-color: var(--gold); background: linear-gradient(135deg, var(--panel) 0%, #1e2e1e 100%); }
+  .price-course { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .price-meta { font-size: 11px; color: var(--text3); margin-bottom: 14px; }
+  .price-row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--border2); }
+  .price-row:last-child { border-bottom: none; }
+  .price-key { font-size: 12px; color: var(--text3); }
+  .price-amt { font-size: 13px; font-weight: 500; color: var(--text); }
+  .price-amt.gold { color: var(--gold2); }
+  .price-amt.green { color: var(--green-bright); }
+  .value-banner {
+    background: linear-gradient(90deg, rgba(200,168,75,0.12), rgba(200,168,75,0.06));
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 20px; margin-top: 1rem;
+    display: flex; align-items: center; gap: 14px;
+    flex-wrap: wrap;
+  }
+  .vb-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(200,168,75,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .vb-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .vb-text strong { color: var(--gold2); }
+
+  /* ── RANKING ── */
+  .ranking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0; margin-bottom: 2rem; border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; }
+  .rank-card { padding: 20px 22px; border-right: 1px solid var(--border2); position: relative; transition: background .2s; }
+  .rank-card:last-child { border-right: none; }
+  .rank-card:hover { background: var(--panel2); }
+  .rank-pos { font-size: 52px; font-weight: 700; font-family: 'Playfair Display', serif; line-height: 1; margin-bottom: 8px; opacity: 0.22; position: absolute; top: 12px; right: 18px; }
+  .rank-medal { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .rank-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .rank-style { font-size: 11px; color: var(--text3); margin-bottom: 14px; }
+  .rank-attr { display: flex; flex-direction: column; gap: 5px; }
+  .rank-attr-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .rank-attr-icon { width: 14px; text-align: center; flex-shrink: 0; font-size: 12px; }
+  .rank-price-badge { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .stars { letter-spacing: 2px; font-size: 12px; }
+
+  /* ── WARNING BOX ── */
+  .warn-box {
+    background: rgba(224,82,82,0.08); border: 1px solid rgba(224,82,82,0.25);
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 12px; color: #f0a0a0; line-height: 1.7;
+    margin-top: 1rem;
+  }
+  .warn-box strong { color: #f5baba; }
+
+  /* ── NOTE BOX ── */
+  .note-box {
+    background: rgba(200,168,75,0.06); border: 1px solid rgba(200,168,75,0.15);
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 12px; color: var(--text2); line-height: 1.7;
+    margin-top: 1rem;
+  }
+  .note-box strong { color: var(--gold2); }
+
+  /* ── TIMETABLE ── */
+  .timetable { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
+  .tt-row { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border2); transition: background .15s; }
+  .tt-row:last-child { border-bottom: none; }
+  .tt-row:hover { background: var(--panel2); }
+  .tt-date { font-size: 12px; font-weight: 500; color: var(--text3); width: 80px; flex-shrink: 0; }
+  .tt-time { font-size: 18px; font-weight: 600; color: var(--gold2); width: 72px; flex-shrink: 0; font-family: 'Playfair Display', serif; }
+  .tt-course { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+  .tt-detail { font-size: 12px; color: var(--text3); }
+  .tt-chip { padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border2); margin: 2rem 0; }
+  .label-sm { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border2);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 11px; color: var(--text3);
+  }
+  footer strong { color: var(--gold); }
+
+  /* ── LINKS ── */
+  a.course-link {
+    color: inherit; text-decoration: none;
+    border-bottom: 1px solid rgba(200,168,75,0.3);
+    transition: border-color .15s, color .15s;
+  }
+  a.course-link:hover { color: var(--gold2); border-color: var(--gold2); }
+  a.ext-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; color: var(--text3); text-decoration: none;
+    padding: 3px 8px; border: 1px solid var(--border2);
+    border-radius: 4px; transition: all .15s; margin-top: 8px;
+  }
+  a.ext-link:hover { color: var(--gold2); border-color: var(--border); background: var(--panel2); }
+  a.ext-link svg { width: 10px; height: 10px; flex-shrink: 0; }
+
+  /* ── MAP ── */
+  .map-wrap { margin-bottom: 2rem; border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .map-header { padding: 12px 18px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; }
+  .map-title { font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.04em; }
+  .map-legend { display: flex; gap: 14px; flex-wrap: wrap; }
+  .map-leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+  .map-leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .header-nav { display: none; }
+    .main { padding: 1.25rem; }
+    .hero { padding: 2rem 1.25rem; }
+    .tt-time { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-badge">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+          <circle cx="12" cy="12" r="2" fill="none" stroke="#0d1a12" stroke-width="1.5"/>
+          <path d="M8 5.5c0 0 1.5 2 4 2s4-2 4-2" fill="none" stroke="#0d1a12" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-title">Belek Open 2026</div>
+        <div class="logo-sub">Golf Dashboard</div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn active" onclick="showSection('overview', this)">Overview</button>
+      <button class="nav-btn" onclick="showSection('schedule', this)">Schedule</button>
+      <button class="nav-btn" onclick="showSection('scorecards', this)">Scorecards</button>
+      <button class="nav-btn" onclick="showSection('hazards', this)">Hazards</button>
+      <button class="nav-btn" onclick="showSection('handicaps', this)">Handicaps</button>
+
+    </nav>
+    <div class="header-badge">27–31 Mar 2026</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Belek · Antalya · Turkey</div>
+    <h1 class="hero-title">Belek Open <span>2026</span></h1>
+    <p class="hero-sub">Kaya Palazzo Golf Resort &nbsp;·&nbsp; 6 players &nbsp;·&nbsp; 4 rounds &nbsp;·&nbsp; Yellow tees</p>
+    <div class="hero-pills">
+      <span class="pill"><span class="pill-dot" style="background:#7bb8e8"></span>Pasha — 28 Mar 12:06</span>
+      <span class="pill"><span class="pill-dot" style="background:#6ecb90"></span>Kaya — 29 Mar 10:42</span>
+      <span class="pill"><span class="pill-dot" style="background:#6ecb90"></span>Kaya — 30 Mar 09:30</span>
+      <span class="pill"><span class="pill-dot" style="background:var(--gold2)"></span>Carya (Day→Night) — 31 Mar 15:27</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ══ OVERVIEW ══ -->
+  <section id="sec-overview" class="section active">
+    <div class="section-header">
+      <div class="section-title">Course overview</div>
+      <div class="section-desc">Yellow tees · Course ratings, distances and par breakdowns</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Rounds</div>
+        <div class="stat-value">4</div>
+        <div class="stat-sub">3 courses · 5 nights</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Players</div>
+        <div class="stat-value">6</div>
+        <div class="stat-sub">HCP 15.8 – 28.0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total metres</div>
+        <div class="stat-value">22,372</div>
+        <div class="stat-sub">Across all 4 rounds</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Package cost</div>
+        <div class="stat-value" style="color:var(--gold2)">£1,124</div>
+        <div class="stat-sub">Per person · All Inclusive</div>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-wrap">
+      <div class="map-header">
+        <span class="map-title">Belek region — courses, hotel &amp; airport</span>
+        <div class="map-legend">
+          <span class="map-leg"><span class="map-leg-dot" style="background:#7bb8e8"></span>Playing courses</span>
+          <span class="map-leg"><span class="map-leg-dot" style="background:#6ecb90"></span>Hotel</span>
+          <span class="map-leg"><span class="map-leg-dot" style="background:#e2c97e"></span>Airport</span>
+          <span class="map-leg"><span class="map-leg-dot" style="background:#888780"></span>Other courses</span>
+        </div>
+      </div>
+      <svg width="100%" viewBox="0 0 760 370" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#12211a">
+        <defs>
+          <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M2 2L8 5L2 8" fill="none" stroke="#6a7d6c" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- Mediterranean coastline (bottom) -->
+        <path d="M0 310 Q60 305 120 308 Q180 310 240 307 Q310 304 380 306 Q450 308 520 305 Q590 302 660 306 Q710 308 760 305 L760 370 L0 370 Z" fill="#0d1f2d" opacity="0.7"/>
+        <text x="380" y="348" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4a6a80" letter-spacing="4">M E D I T E R R A N E A N   S E A</text>
+
+        <!-- Road D400 (horizontal, dashed) -->
+        <line x1="0" y1="200" x2="760" y2="200" stroke="#2a3a2c" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="20" y="195" font-family="DM Sans,sans-serif" font-size="9" fill="#3a4e3c">D400</text>
+
+        <!-- Road to airport (northwest) -->
+        <line x1="100" y1="200" x2="48" y2="80" stroke="#2a3a2c" stroke-width="1" stroke-dasharray="4 4"/>
+        <text x="40" y="74" font-family="DM Sans,sans-serif" font-size="9" fill="#3a4e3c">Antalya 30 km</text>
+
+        <!-- Belek access roads (vertical, light) -->
+        <line x1="300" y1="200" x2="300" y2="310" stroke="#2a3a2c" stroke-width="1" stroke-dasharray="3 4"/>
+        <line x1="420" y1="200" x2="420" y2="310" stroke="#2a3a2c" stroke-width="1" stroke-dasharray="3 4"/>
+        <line x1="540" y1="200" x2="540" y2="310" stroke="#2a3a2c" stroke-width="1" stroke-dasharray="3 4"/>
+
+        <!-- Green pine forest zone (mid-belt) -->
+        <rect x="50" y="180" width="660" height="130" rx="4" fill="#1a2e1e" opacity="0.5"/>
+        <text x="700" y="215" font-family="DM Sans,sans-serif" font-size="9" fill="#2d4a30" text-anchor="end">Belek Golf Belt</text>
+
+        <!-- AIRPORT (AYT) - northwest -->
+        <g style="cursor:pointer" onclick="window.open('https://www.google.com/maps/search/Antalya+Airport','_blank')">
+          <rect x="30" y="50" width="90" height="40" rx="6" fill="#1e2c1a" stroke="#c8a84b" stroke-width="1"/>
+          <text x="75" y="67" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#e2c97e">AYT Airport</text>
+          <text x="75" y="80" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#8a9a6c">Antalya Intl.</text>
+          <!-- plane icon -->
+          <text x="25" y="74" font-family="DM Sans,sans-serif" font-size="13" fill="#c8a84b">✈</text>
+        </g>
+        <!-- road line from airport to D400 -->
+        <line x1="75" y1="90" x2="100" y2="200" stroke="#c8a84b" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.4"/>
+
+        <!-- KAYA PALAZZO HOTEL + GOLF (our hotel & rounds 2+3) -->
+        <g style="cursor:pointer" onclick="window.open('https://www.kayapalazzogolfresort.com','_blank')">
+          <rect x="340" y="218" width="118" height="52" rx="7" fill="#1a2e1e" stroke="#6ecb90" stroke-width="1.5"/>
+          <text x="399" y="235" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#6ecb90">Kaya Palazzo</text>
+          <text x="399" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#a8b8aa">Hotel + Golf</text>
+          <text x="399" y="261" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4caf72">29 &amp; 30 Mar ✓</text>
+        </g>
+        <!-- pin dot -->
+        <circle cx="399" cy="215" r="5" fill="#6ecb90"/>
+        <circle cx="399" cy="215" r="9" fill="none" stroke="#6ecb90" stroke-width="1" opacity="0.4"/>
+
+        <!-- PASHA / ANTALYA GC (west of Belek, round 1) -->
+        <g style="cursor:pointer" onclick="window.open('https://agc.com.tr/the-pasha-2/?lang=en','_blank')">
+          <rect x="128" y="218" width="112" height="52" rx="7" fill="#162230" stroke="#7bb8e8" stroke-width="1.5"/>
+          <text x="184" y="235" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#7bb8e8">The Pasha</text>
+          <text x="184" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#a8b8aa">Antalya Golf Club</text>
+          <text x="184" y="261" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#7bb8e8">28 Mar · 12:06</text>
+        </g>
+        <circle cx="184" cy="215" r="5" fill="#7bb8e8"/>
+        <circle cx="184" cy="215" r="9" fill="none" stroke="#7bb8e8" stroke-width="1" opacity="0.4"/>
+        <!-- distance label -->
+        <text x="292" y="212" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4a5a4c">~13 km</text>
+        <line x1="210" y1="215" x2="370" y2="215" stroke="#4a5a4c" stroke-width="0.5" stroke-dasharray="3 3"/>
+
+        <!-- CARYA (east of Kaya, round 4) -->
+        <g style="cursor:pointer" onclick="window.open('https://www.caryagolf.com/en/','_blank')">
+          <rect x="526" y="218" width="112" height="52" rx="7" fill="#162230" stroke="#7bb8e8" stroke-width="1.5"/>
+          <text x="582" y="235" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="600" fill="#7bb8e8">Carya Golf</text>
+          <text x="582" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#a8b8aa">Regnum Carya</text>
+          <text x="582" y="261" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#7bb8e8">31 Mar · Day→Night</text>
+        </g>
+        <circle cx="582" cy="215" r="5" fill="#7bb8e8"/>
+        <circle cx="582" cy="215" r="9" fill="none" stroke="#7bb8e8" stroke-width="1" opacity="0.4"/>
+        <text x="491" y="212" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4a5a4c">~5 km</text>
+        <line x1="458" y1="215" x2="526" y2="215" stroke="#4a5a4c" stroke-width="0.5" stroke-dasharray="3 3"/>
+
+        <!-- Other courses (grey, smaller) -->
+        <!-- National GC -->
+        <rect x="460" y="145" width="72" height="28" rx="4" fill="#1a241a" stroke="#3a4a3c" stroke-width="0.5"/>
+        <text x="496" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a6a5c">National GC</text>
+        <text x="496" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a3c">Belek</text>
+
+        <!-- Cornelia GC -->
+        <rect x="240" y="145" width="72" height="28" rx="4" fill="#1a241a" stroke="#3a4a3c" stroke-width="0.5"/>
+        <text x="276" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a6a5c">Cornelia GC</text>
+        <text x="276" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a3c">Faldo Course</text>
+
+        <!-- Gloria GC -->
+        <rect x="148" y="145" width="72" height="28" rx="4" fill="#1a241a" stroke="#3a4a3c" stroke-width="0.5"/>
+        <text x="184" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a6a5c">Gloria GC</text>
+        <text x="184" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a3c">Old + New</text>
+
+        <!-- Sueno GC -->
+        <rect x="350" y="145" width="72" height="28" rx="4" fill="#1a241a" stroke="#3a4a3c" stroke-width="0.5"/>
+        <text x="386" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a6a5c">Sueno GC</text>
+        <text x="386" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a3c">Dunes + Pines</text>
+
+        <!-- Montgomerie -->
+        <rect x="570" y="145" width="82" height="28" rx="4" fill="#1a241a" stroke="#3a4a3c" stroke-width="0.5"/>
+        <text x="611" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#5a6a5c">Montgomerie</text>
+        <text x="611" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a3c">Maxx Royal</text>
+
+        <!-- Compass rose -->
+        <g transform="translate(716,44)">
+          <circle r="18" fill="#1a2820" stroke="#2a3a2c" stroke-width="0.5"/>
+          <text x="0" y="-6" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="600" fill="#6a7d6c">N</text>
+          <line x1="0" y1="-14" x2="0" y2="14" stroke="#3a4a3c" stroke-width="0.5"/>
+          <line x1="-14" y1="0" x2="14" y2="0" stroke="#3a4a3c" stroke-width="0.5"/>
+          <polygon points="0,-14 3,-6 0,-9 -3,-6" fill="#c8a84b" opacity="0.8"/>
+        </g>
+
+        <!-- Scale bar -->
+        <line x1="620" y1="338" x2="680" y2="338" stroke="#4a5a4c" stroke-width="1"/>
+        <line x1="620" y1="334" x2="620" y2="342" stroke="#4a5a4c" stroke-width="1"/>
+        <line x1="680" y1="334" x2="680" y2="342" stroke="#4a5a4c" stroke-width="1"/>
+        <text x="650" y="330" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4a5a4c">~5 km</text>
+
+        <!-- click hint -->
+        <text x="380" y="290" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#3a4a3c">Click course markers to open website</text>
+      </svg>
+    </div>
+
+    <div class="course-grid">
+      <!-- PASHA -->
+      <div class="course-card">
+        <div class="course-card-header">
+          <div>
+            <div class="course-name"><a href="https://agc.com.tr/the-pasha-2/?lang=en" target="_blank" class="course-link">The Pasha</a></div>
+            <div class="course-date">28 Mar · 12:06 · Antalya Golf Club</div>
+          </div>
+          <span class="course-badge-chip chip-pasha">Parkland</span>
+        </div>
+        <div class="course-card-body">
+          <div class="course-stat-row"><span class="csr-label">Yellow tees</span><span class="csr-value">5,232 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Par</span><span class="csr-value">72 &nbsp;(5P3 · 9P4 · 4P5)</span></div>
+          <div class="course-stat-row"><span class="csr-label">Course rating</span><span class="csr-value">67.7 · Slope 123</span></div>
+          <div class="course-stat-row"><span class="csr-label">Avg par 3 / 4 / 5</span><span class="csr-value">147 / 297 / 457 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Bunkers</span><span class="csr-value">57</span></div>
+          <div class="course-stat-row"><span class="csr-label">Water hazards</span><span class="csr-value">6 lakes</span></div>
+          <div class="course-stat-row"><span class="csr-label">Green fee</span><span class="csr-value" style="color:#7bb8e8">€160 rack · €135 discounted</span></div>
+          <div class="course-stat-row"><span class="csr-label">Difficulty</span>
+            <div class="bar-mini-wrap">
+              <div class="bar-mini-track"><div class="bar-mini-fill" style="width:45%;background:#7bb8e8"></div></div>
+              <span class="csr-value" style="font-size:11px;color:#7bb8e8">3rd / 3</span>
+            </div>
+          </div>
+          <a href="https://agc.com.tr/?lang=en" target="_blank" class="ext-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            agc.com.tr — Official website
+          </a>
+        </div>
+      </div>
+
+      <!-- KAYA -->
+      <div class="course-card">
+        <div class="course-card-header">
+          <div>
+            <div class="course-name"><a href="https://www.kayapalazzogolfresort.com" target="_blank" class="course-link">Kaya Palazzo</a></div>
+            <div class="course-date">29 &amp; 30 Mar · Kaya Eagles GC</div>
+          </div>
+          <span class="course-badge-chip chip-kaya">Pine forest</span>
+        </div>
+        <div class="course-card-body">
+          <div class="course-stat-row"><span class="csr-label">Yellow tees</span><span class="csr-value">5,570 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Par</span><span class="csr-value">72 &nbsp;(5P3 · 9P4 · 4P5)</span></div>
+          <div class="course-stat-row"><span class="csr-label">Course rating</span><span class="csr-value">69.0 · Slope 117</span></div>
+          <div class="course-stat-row"><span class="csr-label">Avg par 3 / 4 / 5</span><span class="csr-value">142 / 333 / 425 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Bunkers</span><span class="csr-value">~35</span></div>
+          <div class="course-stat-row"><span class="csr-label">Water hazards</span><span class="csr-value">9 lakes · 50%+ holes</span></div>
+          <div class="course-stat-row"><span class="csr-label">Green fee</span><span class="csr-value" style="color:#6ecb90">Included in package ✓</span></div>
+          <div class="course-stat-row"><span class="csr-label">Difficulty</span>
+            <div class="bar-mini-wrap">
+              <div class="bar-mini-track"><div class="bar-mini-fill" style="width:65%;background:#6ecb90"></div></div>
+              <span class="csr-value" style="font-size:11px;color:#6ecb90">2nd / 3</span>
+            </div>
+          </div>
+          <a href="https://www.kayapalazzogolfresort.com" target="_blank" class="ext-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            kayapalazzogolfresort.com — Resort website
+          </a>
+        </div>
+      </div>
+
+      <!-- CARYA -->
+      <div class="course-card">
+        <div class="course-card-header">
+          <div>
+            <div class="course-name"><a href="https://www.caryagolf.com/en/" target="_blank" class="course-link">Carya Golf Club</a></div>
+            <div class="course-date">31 Mar · 15:27 · Day → Night</div>
+          </div>
+          <span class="course-badge-chip chip-carya">Heathland</span>
+        </div>
+        <div class="course-card-body">
+          <div class="course-stat-row"><span class="csr-label">Yellow tees</span><span class="csr-value">~6,000 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Par</span><span class="csr-value">72 &nbsp;(4P3 · 10P4 · 4P5)</span></div>
+          <div class="course-stat-row"><span class="csr-label">Course rating</span><span class="csr-value">72.3 · Slope 136</span></div>
+          <div class="course-stat-row"><span class="csr-label">Avg par 3 / 4 / 5</span><span class="csr-value">139 / 404 / 508 m</span></div>
+          <div class="course-stat-row"><span class="csr-label">Bunkers</span><span class="csr-value">~78 · deep</span></div>
+          <div class="course-stat-row"><span class="csr-label">Water hazards</span><span class="csr-value">~6 lakes · 44% holes</span></div>
+          <div class="course-stat-row"><span class="csr-label">Green fee</span><span class="csr-value" style="color:var(--gold2)">€185 rack · Most expensive</span></div>
+          <div class="course-stat-row"><span class="csr-label">Difficulty</span>
+            <div class="bar-mini-wrap">
+              <div class="bar-mini-track"><div class="bar-mini-fill" style="width:100%;background:var(--gold2)"></div></div>
+              <span class="csr-value" style="font-size:11px;color:var(--gold2)">1st / 3</span>
+            </div>
+          </div>
+          <a href="https://www.caryagolf.com/en/" target="_blank" class="ext-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            caryagolf.com — Official website
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="label-sm">Average distance per hole by par type (yellow tees)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:2rem">
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:16px 18px">
+        <div class="label-sm" style="margin-bottom:12px;color:var(--text3)">Avg par 3 distance</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:100%"></div></div><span class="haz-val">147 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:97%"></div></div><span class="haz-val">142 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Carya</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:95%"></div></div><span class="haz-val">139 m</span></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:16px 18px">
+        <div class="label-sm" style="margin-bottom:12px;color:var(--text3)">Avg par 4 distance</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:73%"></div></div><span class="haz-val">297 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:82%"></div></div><span class="haz-val">333 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Carya</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:100%"></div></div><span class="haz-val">404 m</span></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:16px 18px">
+        <div class="label-sm" style="margin-bottom:12px;color:var(--text3)">Avg par 5 distance</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:90%"></div></div><span class="haz-val">457 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:84%"></div></div><span class="haz-val">425 m</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Carya</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:100%"></div></div><span class="haz-val">508 m</span></div>
+      </div>
+    </div>
+
+    <!-- COURSE RANKING -->
+    <div class="label-sm">Course ranking — quality, prestige &amp; price</div>
+    <div class="ranking-grid">
+
+      <!-- #1 CARYA -->
+      <div class="rank-card" style="background:linear-gradient(135deg,var(--panel) 0%,#1e2c1c 100%)">
+        <div class="rank-pos" style="color:var(--gold)">1</div>
+        <div class="rank-medal" style="color:var(--gold)">&#11088; Best in class</div>
+        <div class="rank-name"><a href="https://www.caryagolf.com/en/" target="_blank" class="course-link">Carya Golf Club</a></div>
+        <div class="rank-style">Heathland · Regnum Carya resort</div>
+        <div class="rank-attr">
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9733;</span><span>Golf World Top 10 Turkey, Top 200 Continental Europe</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9650;</span><span>Hardest course · Slope 136 · CR 72.3 (yellow)</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9788;</span><span>Europe's only fully floodlit 18-hole course</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9873;</span><span>Ladies European Tour host course</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9675;</span><span>Heather-lined, bent grass greens, deep bunkers</span></div>
+        </div>
+        <div class="rank-price-badge" style="background:rgba(200,168,75,0.15);color:var(--gold2);border:1px solid var(--border)">
+          <span>&#128181;</span><span>Rack €185 · Most expensive</span>
+        </div>
+        <div style="margin-top:8px"><span class="stars" style="color:var(--gold)">★★★★★</span></div>
+      </div>
+
+      <!-- #2 PASHA -->
+      <div class="rank-card" style="background:var(--panel)">
+        <div class="rank-pos" style="color:#7bb8e8">2</div>
+        <div class="rank-medal" style="color:#7bb8e8">&#129353; Premium resort</div>
+        <div class="rank-name"><a href="https://agc.com.tr/the-pasha-2/?lang=en" target="_blank" class="course-link">The Pasha</a></div>
+        <div class="rank-style">Parkland · Antalya Golf Club</div>
+        <div class="rank-attr">
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9733;</span><span>Golf World Turkey #7 (Pasha course)</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9650;</span><span>57 bunkers, 6 lakes — tactical &amp; polished</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9873;</span><span>National &amp; international amateur tournaments</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9675;</span><span>Wide fairways, excellent conditioning</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9788;</span><span>Taurus Mountain panoramic views</span></div>
+        </div>
+        <div class="rank-price-badge" style="background:rgba(91,155,213,0.12);color:#7bb8e8;border:1px solid rgba(91,155,213,0.25)">
+          <span>&#128181;</span><span>Rack €160 · Mid-range</span>
+        </div>
+        <div style="margin-top:8px"><span class="stars" style="color:#7bb8e8">★★★★</span><span class="stars" style="color:var(--text3)">★</span></div>
+      </div>
+
+      <!-- #3 KAYA -->
+      <div class="rank-card" style="background:var(--panel);border-right:none">
+        <div class="rank-pos" style="color:#6ecb90">3</div>
+        <div class="rank-medal" style="color:#6ecb90">&#129352; Home course</div>
+        <div class="rank-name"><a href="https://www.kayapalazzogolfresort.com" target="_blank" class="course-link">Kaya Palazzo</a></div>
+        <div class="rank-style">Pine forest · On-resort · Playing ×2</div>
+        <div class="rank-attr">
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9733;</span><span>Compact &amp; scenic — great for repeated play</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9650;</span><span>9 lakes, water on 50%+ holes — penal</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9675;</span><span>Narrowest fairways at 250 m landing zones</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#9788;</span><span>Bermuda greens, fast &amp; true</span></div>
+          <div class="rank-attr-row"><span class="rank-attr-icon">&#10003;</span><span>Included in package — steps from the hotel</span></div>
+        </div>
+        <div class="rank-price-badge" style="background:rgba(76,175,114,0.12);color:#6ecb90;border:1px solid rgba(76,175,114,0.25)">
+          <span>&#128181;</span><span>Rack €120–160 · Cheapest / included</span>
+        </div>
+        <div style="margin-top:8px"><span class="stars" style="color:#6ecb90">★★★★</span><span class="stars" style="color:var(--text3)">★</span></div>
+      </div>
+
+    </div>
+
+    <!-- PACKAGE VALUE BANNER -->
+    <div class="value-banner">
+      <div class="vb-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="vb-text">
+        <strong>Package value:</strong> Your £1,124/person covers 5 nights all-inclusive, 4 rounds of golf, and all transfers. Golf alone at rack rates is ~<strong>€585/person</strong>. Carya (€185 rack) is the premium headline course — the Day→Night finish on your last round is the marquee experience of the trip. Kaya, included as the hotel course, is the best-value round.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══ SCHEDULE ══ -->
+  <section id="sec-schedule" class="section">
+    <div class="section-header">
+      <div class="section-title">Tournament schedule</div>
+      <div class="section-desc">Tee times and transfers · 27–31 March 2026</div>
+    </div>
+    <div class="timetable">
+      <div class="tt-row">
+        <div class="tt-date">Fri 27 Mar</div>
+        <div class="tt-time">—</div>
+        <div class="tt-course">Arrival · Kaya Palazzo</div>
+        <div class="tt-detail">Transfer from AYT airport · Group 1 arrives 22:35 (BRU→AYT) · Group 2 arrives 14:50 (GVA→AYT)</div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-date">Sat 28 Mar</div>
+        <div class="tt-time">12:06</div>
+        <div class="tt-course">The Pasha · Antalya Golf Club</div>
+        <div class="tt-detail"><span class="tt-chip chip-pasha">Par 72 · 5,232 m</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-date">Sun 29 Mar</div>
+        <div class="tt-time">10:42</div>
+        <div class="tt-course">Kaya Palazzo Golf Course</div>
+        <div class="tt-detail"><span class="tt-chip chip-kaya">Par 72 · 5,570 m</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-date">Mon 30 Mar</div>
+        <div class="tt-time">09:30</div>
+        <div class="tt-course">Kaya Palazzo Golf Course</div>
+        <div class="tt-detail"><span class="tt-chip chip-kaya">Par 72 · 5,570 m</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-date">Tue 31 Mar</div>
+        <div class="tt-time">15:27</div>
+        <div class="tt-course">Carya Golf Club · Day → Night</div>
+        <div class="tt-detail"><span class="tt-chip chip-carya">Par 72 · ~6,000 m · Floodlit finish</span></div>
+      </div>
+      <div class="tt-row">
+        <div class="tt-date">Wed 1 Apr</div>
+        <div class="tt-time">—</div>
+        <div class="tt-course">Departure · Antalya Airport</div>
+        <div class="tt-detail">Group 1 departs 11:55 (TK2413) · Group 2 departs 14:50 (EZY2142)</div>
+      </div>
+    </div>
+
+    <div class="label-sm">Transfer contacts</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem">
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Transfer 1 — Brussels group</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Contact: Frederic Quatannens</div>
+        <div style="font-size:13px;font-weight:500;color:var(--gold2)">+32 472 59 83 40</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Out XQ551 · In TK2413</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Transfer 2 — Geneva group</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Contact: Simon Herbert</div>
+        <div style="font-size:13px;font-weight:500;color:var(--gold2)">+334 671 911 923</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Out Sun Express 129 · In EZY2142</div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Airport transfer coordinator</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Murat Guraydin</div>
+        <div style="font-size:13px;font-weight:500;color:var(--gold2)">+90 541 450 6158</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px">Name board at arrivals</div>
+      </div>
+    </div>
+
+    <div class="label-sm">Club hire — Simon Herbert</div>
+    <div style="background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;max-width:480px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:4px">Booking ref: BELEK/805</div>
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px">RBZ Men's RH Speedlite Graphite</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap">
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">Delivery</div><div style="font-size:13px;font-weight:500;color:var(--gold2)">Sat 28 Mar · 08:00</div></div>
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">Collection</div><div style="font-size:13px;font-weight:500;color:var(--gold2)">Wed 1 Apr · 09:00</div></div>
+        <div><div style="font-size:11px;color:var(--text3);margin-bottom:2px">Cost</div><div style="font-size:13px;font-weight:500;color:var(--green-bright)">£65 · Paid</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SCORECARDS ══ -->
+  <section id="sec-scorecards" class="section">
+    <div class="section-header">
+      <div class="section-title">Scorecards</div>
+      <div class="section-desc">Yellow tee distances (metres) · Par · Stroke index</div>
+    </div>
+
+    <div class="label-sm">The Pasha · 28 Mar · 12:06 · Par 72 · 5,232 m · CR 67.7 · Slope 123</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="lh">Hole</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+            <th>OUT</th>
+            <th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th>
+            <th>IN</th><th>TOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="lh">Par</td>
+            <td>4</td><td>4</td><td>4</td><td>5</td><td>3</td><td>4</td><td>3</td><td>4</td><td>5</td>
+            <td class="sub-row">36</td>
+            <td>4</td><td>3</td><td>4</td><td>4</td><td>5</td><td>3</td><td>4</td><td>3</td><td>5</td>
+            <td class="sub-row">35</td><td class="tot-row">72</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">Yellow m</td>
+            <td class="dist-val">296</td><td class="dist-val">290</td><td class="dist-val">328</td><td class="dist-val">430</td><td class="dist-val">135</td>
+            <td class="dist-val">329</td><td class="dist-val">148</td><td class="dist-val">329</td><td class="dist-val">444</td>
+            <td class="sub-row">2,729</td>
+            <td class="dist-val">327</td><td class="dist-val">145</td><td class="dist-val">313</td><td class="dist-val">319</td><td class="dist-val">442</td>
+            <td class="dist-val">162</td><td class="dist-val">299</td><td class="dist-val">142</td><td class="dist-val">354</td>
+            <td class="sub-row">2,503</td><td class="tot-row">5,232</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">SI</td>
+            <td class="si-val">7</td><td class="si-val">11</td><td class="si-val">3</td><td class="si-val">13</td><td class="si-val">17</td>
+            <td class="si-val">5</td><td class="si-val">15</td><td class="si-val">1</td><td class="si-val">9</td>
+            <td></td>
+            <td class="si-val">2</td><td class="si-val">16</td><td class="si-val">10</td><td class="si-val">4</td><td class="si-val">14</td>
+            <td class="si-val">12</td><td class="si-val">6</td><td class="si-val">18</td><td class="si-val">8</td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="label-sm">Kaya Palazzo · 29 Mar 10:42 & 30 Mar 09:30 · Par 72 · 5,570 m · CR 69.0 · Slope 117</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="lh">Hole</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+            <th>OUT</th>
+            <th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th>
+            <th>IN</th><th>TOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="lh">Par</td>
+            <td>5</td><td>4</td><td>4</td><td>3</td><td>5</td><td>3</td><td>4</td><td>4</td><td>5</td>
+            <td class="sub-row">37</td>
+            <td>4</td><td>3</td><td>4</td><td>5</td><td>3</td><td>4</td><td>3</td><td>4</td><td>5</td>
+            <td class="sub-row">35</td><td class="tot-row">72</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">Yellow m</td>
+            <td class="dist-val">449</td><td class="dist-val">311</td><td class="dist-val">369</td><td class="dist-val">138</td><td class="dist-val">466</td>
+            <td class="dist-val">149</td><td class="dist-val">302</td><td class="dist-val">317</td><td class="dist-val">340</td>
+            <td class="sub-row">2,841</td>
+            <td class="dist-val">307</td><td class="dist-val">181</td><td class="dist-val">374</td><td class="dist-val">460</td><td class="dist-val">188</td>
+            <td class="dist-val">352</td><td class="dist-val">122</td><td class="dist-val">361</td><td class="dist-val">484</td>
+            <td class="sub-row">2,829</td><td class="tot-row">5,570</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">SI</td>
+            <td class="si-val">5</td><td class="si-val">9</td><td class="si-val">1</td><td class="si-val">17</td><td class="si-val">3</td>
+            <td class="si-val">13</td><td class="si-val">11</td><td class="si-val">15</td><td class="si-val">7</td>
+            <td></td>
+            <td class="si-val">16</td><td class="si-val">8</td><td class="si-val">12</td><td class="si-val">4</td><td class="si-val">14</td>
+            <td class="si-val">10</td><td class="si-val">18</td><td class="si-val">2</td><td class="si-val">6</td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="label-sm">Carya Golf Club · 31 Mar · 15:27 · Par 72 · ~6,000 m · CR 72.3 · Slope 136</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="lh">Hole</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th>
+            <th>OUT</th>
+            <th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th>
+            <th>IN</th><th>TOT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="lh">Par</td>
+            <td>4</td><td>4</td><td>5</td><td>3</td><td>4</td><td>4</td><td>4</td><td>4</td><td>5</td>
+            <td class="sub-row">37</td>
+            <td>5</td><td>4</td><td>4</td><td>4</td><td>3</td><td>4</td><td>3</td><td>5</td><td>4</td>
+            <td class="sub-row">36</td><td class="tot-row">72</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">Yellow m</td>
+            <td class="dist-val">360</td><td class="dist-val">385</td><td class="dist-val">462</td><td class="dist-val">148</td><td class="dist-val">390</td>
+            <td class="dist-val">400</td><td class="dist-val">375</td><td class="dist-val">380</td><td class="dist-val">490</td>
+            <td class="sub-row">3,390</td>
+            <td class="dist-val">530</td><td class="dist-val">390</td><td class="dist-val">410</td><td class="dist-val">370</td><td class="dist-val">145</td>
+            <td class="dist-val">405</td><td class="dist-val">130</td><td class="dist-val">480</td><td class="dist-val">520</td>
+            <td class="sub-row">3,380</td><td class="tot-row">~6,000</td>
+          </tr>
+          <tr>
+            <td class="lh" style="color:var(--text3);font-size:11px">SI</td>
+            <td class="si-val">6</td><td class="si-val">4</td><td class="si-val">8</td><td class="si-val">18</td><td class="si-val">2</td>
+            <td class="si-val">12</td><td class="si-val">14</td><td class="si-val">10</td><td class="si-val">16</td>
+            <td></td>
+            <td class="si-val">7</td><td class="si-val">1</td><td class="si-val">5</td><td class="si-val">13</td><td class="si-val">17</td>
+            <td class="si-val">3</td><td class="si-val">15</td><td class="si-val">9</td><td class="si-val">11</td>
+            <td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:-8px">* Pasha distances converted from yards (5,713 yds). Carya yellow distances estimated — verify on day.</p>
+  </section>
+
+  <!-- ══ HAZARDS ══ -->
+  <section id="sec-hazards" class="section">
+    <div class="section-header">
+      <div class="section-title">Course hazards</div>
+      <div class="section-desc">Bunkers, water, fairway character and key strategic notes</div>
+    </div>
+
+    <div class="hazard-section">
+      <div class="hazard-card">
+        <div class="haz-title" style="color:#7bb8e8">Bunkers</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:73%"></div></div><span class="haz-val">57 bunkers</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:45%"></div></div><span class="haz-val">~35</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:var(--gold2)">Carya</span><div class="haz-track"><div class="haz-fill" style="background:var(--gold2);width:100%"></div></div><span class="haz-val">~78 · deep</span></div>
+      </div>
+      <div class="hazard-card">
+        <div class="haz-title" style="color:#5b9bd5">Water lakes</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:55%"></div></div><span class="haz-val">6 lakes</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:100%"></div></div><span class="haz-val">9 lakes</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:var(--gold2)">Carya</span><div class="haz-track"><div class="haz-fill" style="background:var(--gold2);width:55%"></div></div><span class="haz-val">~6 lakes</span></div>
+      </div>
+      <div class="hazard-card">
+        <div class="haz-title" style="color:var(--text2)">Water in play (% holes)</div>
+        <div class="haz-row"><span class="haz-label" style="color:#7bb8e8">Pasha</span><div class="haz-track"><div class="haz-fill" style="background:#7bb8e8;width:33%"></div></div><span class="haz-val">~33%</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:#6ecb90">Kaya</span><div class="haz-track"><div class="haz-fill" style="background:#6ecb90;width:100%"></div></div><span class="haz-val">50%+</span></div>
+        <div class="haz-row"><span class="haz-label" style="color:var(--gold2)">Carya</span><div class="haz-track"><div class="haz-fill" style="background:var(--gold2);width:44%"></div></div><span class="haz-val">~44%</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:1.5rem">
+      <div style="background:var(--panel);border:1px solid rgba(91,155,213,0.2);border-radius:10px;padding:16px 20px">
+        <div class="haz-title" style="color:#7bb8e8"><a href="https://agc.com.tr/the-pasha-2/?lang=en" target="_blank" class="course-link" style="color:#7bb8e8">Pasha — strategic notes</a></div>
+        <ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:14px">
+          <li>Wide, forgiving fairways — most beginner-friendly</li>
+          <li>57 cleverly placed bunkers (most of the 3)</li>
+          <li>Tricky dog-legs on several holes</li>
+          <li>Undulating greens — approach accuracy key</li>
+          <li>6 lakes but mostly avoidable</li>
+          <li>Best for: warming up, scoring well</li>
+        </ul>
+      </div>
+      <div style="background:var(--panel);border:1px solid rgba(76,175,114,0.2);border-radius:10px;padding:16px 20px">
+        <div style="font-size:13px;font-weight:500;color:#6ecb90;margin-bottom:10px"><a href="https://www.kayapalazzogolfresort.com" target="_blank" class="course-link" style="color:#6ecb90">Kaya — strategic notes</a></div>
+        <ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:14px">
+          <li>Narrowest fairways at ~250 m landing zone</li>
+          <li>Water on 9+ holes — most penal of the 3</li>
+          <li>Risk/reward on holes 3, 5, 13, 17, 18</li>
+          <li>Bermuda greens — fast, true</li>
+          <li>4 bridges over water</li>
+          <li>Best for: decision making off the tee</li>
+        </ul>
+      </div>
+      <div style="background:var(--panel);border:1px solid rgba(200,168,75,0.2);border-radius:10px;padding:16px 20px">
+        <div style="font-size:13px;font-weight:500;color:var(--gold2);margin-bottom:10px"><a href="https://www.caryagolf.com/en/" target="_blank" class="course-link" style="color:var(--gold2)">Carya — strategic notes</a></div>
+        <ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:14px">
+          <li>Tightest from yellow — back tees are wider</li>
+          <li>Heather GUR — free drop if ball in heather</li>
+          <li>Very fast, sloping bent grass greens</li>
+          <li>Deep bunkers — hard to escape</li>
+          <li>Europe's 1st fully lit 18-hole course</li>
+          <li>Best for: experience, the ultimate challenge</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Carya Day→Night tip:</strong> Your 15:27 tee time means you start in full daylight and transition to floodlights around holes 6–8. Lights are mounted 36 m high at 250 Lux — genuinely playable. The tricky window is the twilight transition: aim for fairway centre, avoid aggressive lines on holes 6–9. Ball flight becomes harder to track beyond 180 m in the early lit phase. The course turns into a completely different experience once fully lit — enjoy it.
+    </div>
+  </section>
+
+  <!-- ══ HANDICAPS ══ -->
+  <section id="sec-handicaps" class="section">
+    <div class="section-header">
+      <div class="section-title">Playing handicaps</div>
+      <div class="section-desc">Calculated per course · Formula: EHI × (Slope ÷ 113) + (CR − Par) · Rounded</div>
+    </div>
+
+    <div class="hcp-grid">
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(91,155,213,0.15);color:#7bb8e8">VH</div>
+        <div class="hcp-name">VdH (Thibault)</div>
+        <div class="hcp-ehi">EHI 28.0</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">26</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">26</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">34</span></div>
+      </div>
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(76,175,114,0.15);color:#6ecb90">FR</div>
+        <div class="hcp-name">Fred</div>
+        <div class="hcp-ehi">EHI 24.0</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">22</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">22</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">29</span></div>
+      </div>
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(200,168,75,0.15);color:var(--gold2)">VI</div>
+        <div class="hcp-name">Victor</div>
+        <div class="hcp-ehi">EHI 26.0</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">24</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">24</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">32</span></div>
+      </div>
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(45,122,79,0.2);color:#4caf72">LO</div>
+        <div class="hcp-name">Loose</div>
+        <div class="hcp-ehi">EHI 17.5</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">15</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">15</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">21</span></div>
+      </div>
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(45,122,79,0.2);color:#4caf72">SI</div>
+        <div class="hcp-name">Simon</div>
+        <div class="hcp-ehi">EHI 15.8</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">13</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">13</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">19</span></div>
+      </div>
+      <div class="hcp-card">
+        <div class="hcp-avatar" style="background:rgba(91,155,213,0.15);color:#7bb8e8">BO</div>
+        <div class="hcp-name">Boes</div>
+        <div class="hcp-ehi">EHI 28.0</div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Pasha</span><span class="hcp-ph" style="color:#7bb8e8">26</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#6ecb90">Kaya</span><span class="hcp-ph" style="color:#6ecb90">26</span></div>
+        <div class="hcp-row"><span class="hcp-course-lbl" style="color:#7bb8e8">Carya</span><span class="hcp-ph" style="color:#7bb8e8">34</span></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>All players within max handicap limits.</strong> Pasha and Carya cap visitors at Men 28 / Women 36. With EHIs at 28.0 or below for all six players, everyone is eligible to play all courses without restriction. Playing handicaps are calculated per course using the WHS formula: EHI × (Slope ÷ 113) + (CR − Par).
+    </div>
+  </section>
+
+
+</main>
+
+<footer>
+  <strong>Belek Open 2026</strong> &nbsp;·&nbsp; Kaya Palazzo Golf Resort, Belek, Antalya &nbsp;·&nbsp; Ref HERBERT270326 &nbsp;·&nbsp; Findagolfbreak.com
+</footer>
+
+<script>
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+</script>
+</body>
+</html>
